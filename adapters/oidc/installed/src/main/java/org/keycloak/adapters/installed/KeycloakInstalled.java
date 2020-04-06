@@ -146,6 +146,10 @@ public class KeycloakInstalled {
         }
     }
 
+    public void login(PrintStream printer, Reader reader) throws IOException, ServerRequest.HttpFailure, VerificationException, InterruptedException, OAuthErrorException, URISyntaxException {
+        login(printer, reader, 0);
+    }
+
     public void logout(int port) throws IOException, InterruptedException, URISyntaxException {
         if (status == Status.LOGGED_DESKTOP) {
             logoutDesktop(port);
@@ -173,7 +177,8 @@ public class KeycloakInstalled {
             callback.start();
         } catch (RuntimeException runtimeException) {
             if (runtimeException.getCause() instanceof BindException) {
-                System.err.println("CallbackListener port " + port + "is already in use. Falling back to auto scan free port.");
+                System.err.println("CallbackListener port " + port + " is already in use. Falling back to auto scan free port.");
+                callback.stop();
                 callback = new CallbackListener(0);
                 callback.start();
             } else {
@@ -250,7 +255,8 @@ public class KeycloakInstalled {
             callback.start();
         } catch (RuntimeException runtimeException) {
             if (runtimeException.getCause() instanceof BindException) {
-                System.err.println("CallbackListener port " + port + "is already in use. Falling back to auto scan free port.");
+                System.err.println("CallbackListener port " + port + " is already in use. Falling back to auto scan free port.");
+                callback.stop();
                 callback = new CallbackListener(0);
                 callback.start();
             } else {
@@ -671,7 +677,7 @@ public class KeycloakInstalled {
             if (portRange.isValidValue(port)) {
                 this.port = port;
             } else {
-                System.err.println("CallbackListener port is out of the invalid range. Falling back to auto scan free port.");
+                System.err.println("CallbackListener port is outside the valid range. Falling back to auto scan free port.");
                 this.port = 0;
             }
         }
